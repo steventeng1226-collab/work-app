@@ -124,7 +124,7 @@ table.stat th{background:var(--surf)}
 </nav>
 <script>
 'use strict';
-const APP_VERSION = 'v1.0.0';
+const APP_VERSION = 'v1.0.2';
 const TYPES = ['異常','製程改善','工程試做','專案','預算/CAPEX/營運','其他'];
 const STATUSES = ['待改善','執行中','效果確認','已結案'];
 const CM_TARGETS = ['圍堵','發生','流出'];
@@ -164,7 +164,7 @@ const DB={all:s=>rq(os(s).getAll()),get:(s,k)=>rq(os(s).get(k)),put:(s,v)=>rq(os
   del:(s,k)=>rq(os(s,'readwrite').delete(k)),clear:s=>rq(os(s,'readwrite').clear())};
 const saveDict=()=>DB.put('kv',{k:'dict',v:DICT});
 const savePref=()=>DB.put('kv',{k:'pref',v:PREF});
-async function saveCard(c){c.updatedAt=Date.now();await DB.put('cards',c);const i=CARDS.findIndex(x=>x.id===c.id);if(i>=0)CARDS[i]=c;else CARDS.push(c);}
+async function saveCard(c){if(!c.vgroup)c.vgroup=c.id;c.updatedAt=Date.now();await DB.put('cards',c);const i=CARDS.findIndex(x=>x.id===c.id);if(i>=0)CARDS[i]=c;else CARDS.push(c);}
 async function getImg(id){if(IMG.has(id))return IMG.get(id);const r=await DB.get('images',id);const d=r?r.data:'';IMG.set(id,d);return d;}
 async function putImg(id,data){IMG.set(id,data);await DB.put('images',{id,data});}
 
@@ -177,8 +177,8 @@ const $=s=>document.querySelector(s);
 function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200);}
 const isHidden=k=>PREF.present&&PREF.hidden.includes(k);
 const cardById=id=>CARDS.find(c=>c.id===id);
-function newCard(type){return {id:uid(),type:type||'異常',title:'',date:today(),author:'',tags:[],fullText:'',note:'',source:'手動建立',
-  pinned:false,watch:false,images:[],relations:[],vgroup:null,ver:1,createdAt:Date.now(),updatedAt:Date.now(),ab:newAb()};}
+function newCard(type){const id=uid();return {id,type:type||'異常',title:'',date:today(),author:'',tags:[],fullText:'',note:'',source:'手動建立',
+  pinned:false,watch:false,images:[],relations:[],vgroup:id,ver:1,createdAt:Date.now(),updatedAt:Date.now(),ab:newAb()};}
 function newAb(){return {foundSrc:'',foundStation:'',occurStation:'',machine:'',partNo:'',lotNo:'',sampleQty:'',defectQty:'',defectItem:'',defectMode:'',
   chain:[],occurCause:{l1:'',l2:'',text:''},outCause:{l1:'',l2:'',text:''},verifyText:'',containResult:'',cms:[],review:{items:{},text:''}};}
 function newCm(){return {id:uid(),target:'',means:'',content:'',owner:'',due:'',done:'',status:'待改善',effMethod:'',effDue:'',effResult:''};}
@@ -270,9 +270,10 @@ function renderHome(){const box=$('#hres');QT=parseQuery(Q);const L=latest();
     bindRows(box);return;}
   const watch=L.filter(c=>watchReasons(c).length).sort((a,b)=>overdueScore(b)-overdueScore(a)||b.date.localeCompare(a.date));
   const pins=L.filter(c=>c.pinned).sort((a,b)=>b.date.localeCompare(a.date));
-  const rec=PREF.recent.map(cardById).filter(Boolean).filter(isLatest).slice(0,8);
+  const shown=new Set([...watch,...pins].map(c=>c.id));
+  const rec=PREF.recent.map(cardById).filter(Boolean).filter(isLatest).filter(c=>!shown.has(c.id)).slice(0,8);
   box.innerHTML=
-   `<h2>待我關注 <span class="n">${watch.length}</span></h2>`+(watch.length?watch.map(c=>rowHtml(c)+`<div class="s" style="margin:-6px 0 6px;color:var(--amb);font-weight:700;font-size:15px">${watchReasons(c).join('、')}</div>`).join(''):'<div class="empty">目前沒有需要關注的項目。</div>')+
+   `<h2>待我關注 <span class="n">${watch.length}</span></h2>`+(watch.length?watch.map(c=>rowHtml(c)+(c.watch?`<div class="s" style="margin:-6px 0 6px;color:var(--amb);font-weight:700;font-size:15px">手動標記</div>`:'')).join(''):'<div class="empty">目前沒有需要關注的項目。</div>')+
    `<h2>已釘選 <span class="n">${pins.length}</span></h2>`+(pins.length?pins.map(c=>rowHtml(c)).join(''):'<div class="empty">開會前常用的資料，在詳細頁按「釘選」就會出現在這裡。</div>')+
    `<h2>最近查看</h2>`+(rec.length?rec.map(c=>rowHtml(c)).join(''):'<div class="empty">還沒有查看紀錄。</div>')+
    (CARDS.length?'':'<div class="btns"><a class="btn pri" href="#/new" style="text-decoration:none">新增第一筆資料</a></div>')+
@@ -595,7 +596,8 @@ async function restore(txt){let j;try{j=JSON.parse(txt);}catch(e){alert('備份�
 
 /* ---------- 啟動 ---------- */
 function applyPresent(){document.body.classList.toggle('present',PREF.present);$('#pmBtn').textContent=PREF.present?'展示中・關閉':'展示模式';}
-async function init(){await openDB();CARDS=(await DB.all('cards')).map(normCard);
+async function init(){await openDB();const raw=await DB.all('cards');CARDS=raw.map(normCard);
+  for(let i=0;i<raw.length;i++)if(!raw[i].vgroup)await DB.put('cards',CARDS[i]); // v1.0.1 修正舊資料缺版本群組
   const d=await DB.get('kv','dict');if(d)DICT=Object.assign(defaultDict(),d.v);const p=await DB.get('kv','pref');if(p)PREF=Object.assign(PREF,p.v);
   applyPresent();
   $('#pmBtn').onclick=()=>{PREF.present=!PREF.present;savePref();applyPresent();if(PREF.present&&location.hash.startsWith('#/edit')){F=null;history.back();}else route();toast(PREF.present?'展示模式：已隱藏指定欄位':'已關閉展示模式');};
