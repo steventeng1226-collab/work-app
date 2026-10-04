@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1A2B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>工作 APP</title>
+<style>
+:root{--ink:#0E1A2B;--ink2:#2B3A4F;--bg:#FFFFFF;--surf:#EEF1F5;--line:#AEB9C7;--act:#1747C2;--actbg:#E3EAFB;
+--red:#B91C1C;--redbg:#FDE2E2;--amb:#8A3B00;--ambbg:#FDE7C2;--grn:#14532D;--grnbg:#D5F0DD}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:500 18px/1.55 "Noto Sans TC","Noto Sans CJK TC",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+header.top{position:sticky;top:0;z-index:20;background:var(--ink);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+header.top h1{font-size:21px;margin:0;flex:1;font-weight:800;letter-spacing:.02em}
+header.top .back{background:none;border:0;color:#fff;font-size:26px;padding:0 8px 0 0;line-height:1}
+header.top .pm{border:2px solid #fff;background:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:16px;font-weight:700}
+body.present header.top{background:#8A3B00}
+body.present header.top .pm{background:#fff;color:#8A3B00}
+main{padding:14px 14px calc(96px + env(safe-area-inset-bottom,0px));max-width:760px;margin:0 auto}
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:2px solid var(--ink);display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.bot a{flex:1;text-align:center;padding:10px 0 12px;color:var(--ink2);text-decoration:none;font-size:16px;font-weight:700}
+nav.bot a b{display:block;font-size:22px;line-height:1.2}
+nav.bot a.on{color:var(--act);box-shadow:inset 0 4px 0 var(--act)}
+h2{font-size:20px;margin:22px 0 8px;font-weight:800;display:flex;align-items:center;gap:8px}
+h2 .n{background:var(--ink);color:#fff;border-radius:999px;font-size:15px;padding:0 9px}
+h3{font-size:18px;margin:18px 0 6px;font-weight:800}
+.search{display:flex;gap:8px;position:sticky;top:58px;z-index:10;background:#fff;padding:6px 0}
+.search input{flex:1;font-size:20px;padding:12px 14px;border:2px solid var(--ink);border-radius:10px}
+.search button{border:2px solid var(--ink);background:#fff;border-radius:10px;padding:0 14px;font-weight:700}
+.row{display:block;width:100%;text-align:left;background:#fff;border:0;border-bottom:1px solid var(--line);padding:12px 2px;cursor:pointer}
+.row .t{font-size:19px;font-weight:800;line-height:1.35}
+.row .m{color:var(--ink2);font-size:16px;margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.row .s{color:var(--ink2);font-size:16px;margin-top:4px}
+.b{display:inline-block;border-radius:6px;padding:0 7px;font-size:15px;font-weight:700;border:1.5px solid var(--ink2);color:var(--ink2);background:#fff;white-space:nowrap}
+.b.type{background:var(--ink);color:#fff;border-color:var(--ink)}
+.b.red{background:var(--redbg);color:var(--red);border-color:var(--red)}
+.b.amb{background:var(--ambbg);color:var(--amb);border-color:var(--amb)}
+.b.grn{background:var(--grnbg);color:var(--grn);border-color:var(--grn)}
+.b.blu{background:var(--actbg);color:var(--act);border-color:var(--act)}
+mark{background:#FFE14D;color:var(--ink);padding:0 1px;border-radius:2px}
+.empty{color:var(--ink2);padding:14px 0;font-size:17px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}
+.chip{flex:none;border:2px solid var(--ink2);border-radius:999px;padding:5px 14px;background:#fff;font-weight:700;font-size:16px}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px}
+select,input[type=text],input[type=date],input[type=number],input[type=search],textarea{width:100%;padding:10px 11px;border:2px solid var(--line);border-radius:9px;background:#fff;font-size:18px}
+select:focus,input:focus,textarea:focus{outline:3px solid var(--act);outline-offset:0;border-color:var(--act)}
+textarea{min-height:84px;resize:vertical}
+label.f{display:block;margin-top:12px;font-weight:800;font-size:17px}
+label.f .req{color:var(--red)}
+label.f .hint{font-weight:500;color:var(--ink2);font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 8px}
+.sec{border:2px solid var(--ink);border-radius:12px;padding:4px 14px 14px;margin:16px 0}
+.sec>.st{margin:-4px -14px 6px;padding:8px 14px;background:var(--ink);color:#fff;font-weight:800;border-radius:9px 9px 0 0}
+.sec.priv{border-color:var(--amb)} .sec.priv>.st{background:var(--amb)}
+.btn{border:2px solid var(--ink);background:#fff;border-radius:10px;padding:10px 16px;font-weight:800;font-size:17px;cursor:pointer}
+.btn.pri{background:var(--act);border-color:var(--act);color:#fff}
+.btn.dan{border-color:var(--red);color:var(--red)}
+.btn.sm{padding:5px 10px;font-size:15px;border-radius:8px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mode{display:flex;border:2px solid var(--ink);border-radius:10px;overflow:hidden;margin-bottom:6px}
+.mode button{flex:1;border:0;background:#fff;padding:10px;font-weight:800}
+.mode button.on{background:var(--ink);color:#fff}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:6px 0}
+.thumbs .th{position:relative;flex:none}
+.thumbs img{height:130px;border:2px solid var(--ink);border-radius:8px;display:block;background:var(--surf)}
+.thumbs .x{position:absolute;top:4px;right:4px;background:var(--red);color:#fff;border:0;border-radius:6px;width:30px;height:30px;font-weight:800}
+.hero img{width:100%;border:2px solid var(--ink);border-radius:10px;display:block;background:var(--surf)}
+.kv{display:grid;grid-template-columns:7.5em 1fr;gap:4px 10px;margin:6px 0}
+.kv dt{color:var(--ink2);font-weight:700}
+.kv dd{margin:0;font-weight:700;word-break:break-all}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+.chain span.c{background:var(--surf);border:2px solid var(--ink);border-radius:8px;padding:4px 10px;font-weight:800}
+.chain i{font-style:normal;font-weight:800}
+.cm{border:2px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
+.cm.od{border-color:var(--red)}
+.cm .h{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px}
+.cm .no{background:var(--ink);color:#fff;border-radius:999px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.cm select.st{width:auto;padding:4px 8px;font-weight:800}
+.rub{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.rub .q{flex:1}
+.rub button{border:2px solid var(--line);background:#fff;border-radius:8px;min-width:46px;padding:4px 6px;font-weight:800}
+.rub button.ok.on{background:var(--grnbg);border-color:var(--grn);color:var(--grn)}
+.rub button.part.on{background:var(--ambbg);border-color:var(--amb);color:var(--amb)}
+.rub button.ng.on{background:var(--redbg);border-color:var(--red);color:var(--red)}
+.tagrow,.steprow{display:flex;gap:6px;margin-top:6px}
+.tagrow select{width:38%}
+.tagrow button,.steprow button{flex:none;border:2px solid var(--red);color:var(--red);background:#fff;border-radius:8px;width:44px;font-weight:800}
+.alert{border-left:6px solid var(--amb);background:var(--ambbg);padding:10px 12px;border-radius:6px;margin:10px 0;font-weight:700}
+.alert.red{border-color:var(--red);background:var(--redbg);color:var(--red)}
+.ver{text-align:center;color:var(--ink2);margin-top:28px;font-size:16px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-weight:800;z-index:60;max-width:90vw}
+.modal{position:fixed;inset:0;background:rgba(14,26,43,.55);z-index:50;display:flex;align-items:flex-end}
+.modal .box{background:#fff;width:100%;max-height:85vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.viewer{position:fixed;inset:0;background:#000;z-index:70;touch-action:none;overflow:hidden}
+.viewer img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;user-select:none;-webkit-user-drag:none}
+.viewer .bar{position:absolute;left:0;right:0;top:0;display:flex;gap:8px;padding:10px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:rgba(0,0,0,.6);z-index:2;align-items:center}
+.viewer .bar button{background:#fff;color:#000;border:0;border-radius:8px;padding:8px 14px;font-weight:800;font-size:17px}
+.viewer .bar span{color:#fff;flex:1;text-align:center;font-weight:800}
+.dict li{padding:6px 0;border-bottom:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.dict ul{list-style:none;padding:0;margin:4px 0}
+.dict li .nm{flex:1;font-weight:800;min-width:40%}
+.check{display:flex;align-items:center;gap:10px;padding:8px 0;font-weight:700}
+.check input{width:24px;height:24px}
+table.stat{border-collapse:collapse;width:100%;font-size:16px}
+table.stat th,table.stat td{border:1px solid var(--line);padding:6px;text-align:center}
+table.stat th{background:var(--surf)}
+.wrap{overflow-x:auto}
+@media (max-width:420px){.filters{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="top"><button class="back" id="backBtn" hidden aria-label="返回">‹</button><h1 id="ttl">工作 APP</h1><button class="pm" id="pmBtn">展示模式</button></header>
+<main id="main"></main>
+<nav class="bot" id="nav">
+<a href="#/home" data-r="home"><b>⌂</b>首頁</a>
+<a href="#/list" data-r="list"><b>☰</b>全部資料</a>
+<a href="#/new" data-r="new"><b>＋</b>新增</a>
+<a href="#/settings" data-r="settings"><b>⚙</b>設定</a>
+</nav>
+<script>
+'use strict';
+const APP_VERSION = 'v1.0.0';
+const TYPES = ['異常','製程改善','工程試做','專案','預算/CAPEX/營運','其他'];
+const STATUSES = ['待改善','執行中','效果確認','已結案'];
+const CM_TARGETS = ['圍堵','發生','流出'];
+const CM_MEANS = ['人員確認','檢驗加嚴','標準化','防呆','設備治具改善'];
+const CAUSE_L1 = ['人','機','料','法','環','測'];
+const SOURCES = ['手動建立','AI 匯入','截圖','Excel','PPT','會議資料','郵件附件'];
+const HIDEABLE = [['review','講評'],['note','主管備註'],['author','撰寫人'],['owner','對策責任人']];
+
+function defaultDict(){
+  return {
+    stations: ['彎腳站','噴塗站','成形站','外觀站','電鍍站','包裝站'].map(n=>({name:n,cand:false})),
+    foundSrc: ['IPQC','FQC1','FQC2','工程'],
+    defects: [
+      {name:'未噴塗',syn:['漏噴','噴塗不良','未覆蓋'],cand:false},
+      {name:'偏移',syn:[],cand:false},{name:'尺寸異常',syn:[],cand:false},
+      {name:'外觀不良',syn:[],cand:false},{name:'裂痕',syn:[],cand:false},{name:'電鍍不良',syn:[],cand:false}
+    ],
+    causeL2: ['設備精度','治具設計','操作方式','參數設定','材料異常','檢驗漏失','標準不足','防呆不足'],
+    rubric: ['異常描述是否量化（抽檢數、不良率、料號、批號）','是否區分發生與流出','是否做再現性驗證','發生對策是否消除物理原因','是否有永久的流出對策','是否有效果確認的方法與日期'],
+    tagKeys: ['料號','系列','工程站','機台','專案','單位','客戶','年度']
+  };
+}
+let CARDS = [], DICT = defaultDict(), PREF = {present:false, hidden:['review','note'], recent:[]};
+const IMG = new Map();
+
+/* ---------- IndexedDB ---------- */
+let db;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('workapp',1);
+  r.onupgradeneeded=()=>{const d=r.result;
+    if(!d.objectStoreNames.contains('cards'))d.createObjectStore('cards',{keyPath:'id'});
+    if(!d.objectStoreNames.contains('images'))d.createObjectStore('images',{keyPath:'id'});
+    if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv',{keyPath:'k'});};
+  r.onsuccess=()=>{db=r.result;res(db)};r.onerror=()=>rej(r.error);});}
+function rq(r){return new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+const os=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
+const DB={all:s=>rq(os(s).getAll()),get:(s,k)=>rq(os(s).get(k)),put:(s,v)=>rq(os(s,'readwrite').put(v)),
+  del:(s,k)=>rq(os(s,'readwrite').delete(k)),clear:s=>rq(os(s,'readwrite').clear())};
+const saveDict=()=>DB.put('kv',{k:'dict',v:DICT});
+const savePref=()=>DB.put('kv',{k:'pref',v:PREF});
+async function saveCard(c){c.updatedAt=Date.now();await DB.put('cards',c);const i=CARDS.findIndex(x=>x.id===c.id);if(i>=0)CARDS[i]=c;else CARDS.push(c);}
+async function getImg(id){if(IMG.has(id))return IMG.get(id);const r=await DB.get('images',id);const d=r?r.data:'';IMG.set(id,d);return d;}
+async function putImg(id,data){IMG.set(id,data);await DB.put('images',{id,data});}
+
+/* ---------- helpers ---------- */
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function daysBetween(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=s=>document.querySelector(s);
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200);}
+const isHidden=k=>PREF.present&&PREF.hidden.includes(k);
+const cardById=id=>CARDS.find(c=>c.id===id);
+function newCard(type){return {id:uid(),type:type||'異常',title:'',date:today(),author:'',tags:[],fullText:'',note:'',source:'手動建立',
+  pinned:false,watch:false,images:[],relations:[],vgroup:null,ver:1,createdAt:Date.now(),updatedAt:Date.now(),ab:newAb()};}
+function newAb(){return {foundSrc:'',foundStation:'',occurStation:'',machine:'',partNo:'',lotNo:'',sampleQty:'',defectQty:'',defectItem:'',defectMode:'',
+  chain:[],occurCause:{l1:'',l2:'',text:''},outCause:{l1:'',l2:'',text:''},verifyText:'',containResult:'',cms:[],review:{items:{},text:''}};}
+function newCm(){return {id:uid(),target:'',means:'',content:'',owner:'',due:'',done:'',status:'待改善',effMethod:'',effDue:'',effResult:''};}
+function normCard(c){const b=newCard(c.type);const o=Object.assign(b,c);o.ab=Object.assign(newAb(),c.ab||{});
+  o.ab.occurCause=Object.assign({l1:'',l2:'',text:''},o.ab.occurCause||{});o.ab.outCause=Object.assign({l1:'',l2:'',text:''},o.ab.outCause||{});
+  o.ab.review=Object.assign({items:{},text:''},o.ab.review||{});o.ab.cms=(o.ab.cms||[]).map(x=>Object.assign(newCm(),x));
+  if(!o.vgroup)o.vgroup=o.id;return o;}
+
+/* ---------- 計算：狀態、待我關注、重複 ---------- */
+const cmOverdue=c=>(c.status==='待改善'||c.status==='執行中')&&c.due&&c.due<today();
+const cmEffDue=c=>c.status==='效果確認'&&c.effDue&&c.effDue<=today()&&!c.effResult;
+const isAb=c=>c.type==='異常';
+function abStatus(c){const cms=c.ab.cms;if(!cms.length)return '待改善';return STATUSES[Math.min(...cms.map(x=>Math.max(0,STATUSES.indexOf(x.status))))];}
+function abMissing(c){const a=c.ab,m=[];if(!a.occurStation)m.push('發生站');if(!a.chain.filter(Boolean).length)m.push('原因鏈');
+  if(!a.occurCause.l1)m.push('發生原因分類');if(!a.cms.length)m.push('對策');return m;}
+function noProof(c){const cms=c.ab.cms;return cms.length>0&&!cms.some(x=>x.target==='發生'&&(x.means==='防呆'||x.means==='設備治具改善'));}
+function overdueDays(c){const od=c.ab.cms.filter(cmOverdue);return od.length?Math.max(...od.map(x=>daysBetween(x.due,today()))):0;}
+function watchReasons(c){const r=[];if(c.watch)r.push('手動標記');
+  if(isAb(c)){if(abMissing(c).length)r.push('未補完');const d=overdueDays(c);if(d)r.push('逾期 '+d+' 天');if(c.ab.cms.some(cmEffDue))r.push('效果確認到期');}
+  return r;}
+function latest(){const m=new Map();for(const c of CARDS){const p=m.get(c.vgroup);if(!p||c.ver>p.ver)m.set(c.vgroup,c);}return [...m.values()];}
+function isLatest(c){return !CARDS.some(x=>x.vgroup===c.vgroup&&x.ver>c.ver);}
+function suspects(c){if(!isAb(c)||!c.ab.occurStation||!c.ab.defectItem)return [];const linked=new Set(c.relations.map(r=>r.id));
+  return latest().filter(x=>x.id!==c.id&&x.vgroup!==c.vgroup&&isAb(x)&&!linked.has(x.id)&&x.ab.occurStation===c.ab.occurStation&&x.ab.defectItem===c.ab.defectItem);}
+function recurred(c){return c.relations.some(r=>r.kind==='再發'&&(cardById(r.id)?.date||'')>c.date);}
+function badges(c){const h=[`<span class="b type">${esc(c.type)}</span>`];
+  if(c.pinned)h.push('<span class="b blu">釘選</span>');
+  if(isAb(c)){const s=abStatus(c);h.push(`<span class="b ${s==='已結案'?'grn':''}">${s}</span>`);
+    const d=overdueDays(c);if(d)h.push(`<span class="b red">逾期 ${d} 天</span>`);
+    if(abMissing(c).length)h.push('<span class="b amb">未補完</span>');
+    if(c.ab.cms.some(cmEffDue))h.push('<span class="b amb">效果確認到期</span>');
+    if(recurred(c))h.push('<span class="b red">已再發</span>');}
+  if(c.ver>1||!isLatest(c))h.push(`<span class="b">v${c.ver}${isLatest(c)?'':'（舊版）'}</span>`);
+  return h.join('');}
+
+/* ---------- 搜尋：繁簡標準化＋同義詞 ---------- */
+const S2T_PAIRS='异異检檢验驗喷噴线線机機号號质質发發现現单單项項对對认認确確执執试試进進这這设設备備厂廠规規划劃预預汇匯总總优優级級营營数數据據产產转轉动動电電镀鍍装裝测測导導计計参參资資报報责責负負应應关關联聯钉釘选選时時间間开開会會议議讯訊录錄读讀写寫编編辑輯删刪场場业業务務问問题題围圍挡擋缝縫实實际際标標准準纹紋层層环環节節约約销銷盘盤处處边邊缘緣杂雜丝絲调調频頻显顯页頁张張图圖签簽类類别別压壓缩縮轮輪两兩个個样樣为為与與从從内內后後过過还還无無经經难難决決员員岗崗车車组組长長师師状狀态態结結维維护護换換台臺样樣艺藝构構纸紙变變审審书書档檔历歷记記统統趋趨势勢损損费費库庫采採购購货貨运運输輸扩擴迁遷气氣温溫湿濕热熱却卻锡錫脚腳弯彎针針胶膠体體铜銅银銀镍鎳复復证證户戶诉訴达達片片偏偏挑挑烤烤缺缺陷陷边邊满滿漏漏覆覆盖蓋网網版版摆擺放放隙隙内內后後站站认認验驗面面换換讲講评評备備注註项項议議决決级級样樣损損现現员員岗崗队隊阶階段段围圍补補充充册冊启啟闭閉宽寬窄窄厚厚薄薄轴軸齿齒轮輪钢鋼铝鋁锌鋅铁鐵锈鏽蚀蝕焊焊炉爐窑窯烧燒结結晶晶粒粒浆漿涂塗刷刷印印丝絲刮刮刀刀压壓头頭尾尾范範围圍类類别別种種类類';
+const S2T=new Map();for(let i=0;i+1<S2T_PAIRS.length;i+=2){if(S2T_PAIRS[i]!==S2T_PAIRS[i+1])S2T.set(S2T_PAIRS[i],S2T_PAIRS[i+1]);}
+function norm(s){s=String(s??'').toLowerCase();let o='';for(let i=0;i<s.length;i++){const ch=s[i];o+=S2T.get(ch)||ch;}return o;}
+function segments(c){const s=[['標題',c.title],['類型',c.type],['日期',c.date]];
+  if(!isHidden('author'))s.push(['撰寫人',c.author]);
+  c.tags.forEach(t=>s.push([t.k,t.v]));s.push(['全文',c.fullText]);if(!isHidden('note'))s.push(['主管備註',c.note]);
+  if(isAb(c)){const a=c.ab;s.push(['發現來源',a.foundSrc],['發現站',a.foundStation],['發生站',a.occurStation],['機台',a.machine],['料號',a.partNo],['批號',a.lotNo],
+    ['不良項目',a.defectItem],['不良模式',a.defectMode],['原因鏈',a.chain.join(' → ')],['發生原因',[a.occurCause.l1,a.occurCause.l2,a.occurCause.text].join(' ')],
+    ['流出原因',[a.outCause.l1,a.outCause.l2,a.outCause.text].join(' ')],['再現性驗證',a.verifyText],['圍堵結果',a.containResult]);
+    a.cms.forEach((m,i)=>s.push(['對策'+(i+1),[m.target,m.means,m.content,isHidden('owner')?'':m.owner,m.effMethod,m.effResult].join(' ')]));
+    if(!isHidden('review'))s.push(['講評',a.review.text]);}
+  return s.filter(x=>x[1]);}
+function parseQuery(q){return q.trim().split(/\s+/).filter(Boolean).map(t=>{const n=norm(t);const alts=new Set([n]);
+  for(const d of DICT.defects){const names=[d.name,...(d.syn||[])].map(norm);if(names.includes(n))names.forEach(x=>alts.add(x));}
+  return [...alts];});}
+function matchCard(c,terms){const hay=norm(segments(c).map(x=>x[1]).join('\n'));return terms.every(alts=>alts.some(a=>hay.includes(a)));}
+function hl(text,terms){text=String(text??'');if(!terms||!terms.length)return esc(text);const n=norm(text);const rs=[];
+  for(const alts of terms)for(const a of alts){if(!a)continue;let i=n.indexOf(a);while(i>=0){rs.push([i,i+a.length]);i=n.indexOf(a,i+a.length);}}
+  if(!rs.length)return esc(text);rs.sort((x,y)=>x[0]-y[0]);const m=[];for(const r of rs){const l=m[m.length-1];if(l&&r[0]<=l[1])l[1]=Math.max(l[1],r[1]);else m.push(r.slice());}
+  let o='',p=0;for(const[a,b]of m){o+=esc(text.slice(p,a))+'<mark>'+esc(text.slice(a,b))+'</mark>';p=b;}return o+esc(text.slice(p));}
+function snippet(c,terms){for(const[k,v]of segments(c)){if(k==='標題')continue;const n=norm(v);
+  for(const alts of terms)for(const a of alts){const i=n.indexOf(a);if(i>=0){const st=Math.max(0,i-14);const t=v.slice(st,i+a.length+26);
+    return esc(k)+'：'+(st>0?'…':'')+hl(t,terms)+(i+a.length+26<v.length?'…':'');}}}return '';}
+let Q='', QT=[];
+
+/* ---------- 路由 ---------- */
+let F=null; // 編輯中的草稿
+function route(){const h=location.hash||'#/home';const [,r,id]=h.split('/');
+  document.querySelectorAll('nav.bot a').forEach(a=>a.classList.toggle('on',a.dataset.r===(r==='edit'?'new':r)));
+  $('#backBtn').hidden=!(r==='card'||r==='edit');
+  const m=$('#main');
+  if(r==='card')return viewCard(id);
+  if(r==='edit')return viewEdit(id);
+  if(r==='new'){F=null;return viewEdit(null);}
+  if(r==='list')return viewList();
+  if(r==='settings')return viewSettings();
+  return viewHome();}
+function setTitle(t){$('#ttl').textContent=t;}
+function rowHtml(c,terms){const sn=terms&&terms.length?snippet(c,terms):'';
+  const meta=[esc(c.date)];if(c.author&&!isHidden('author'))meta.push(esc(c.author));
+  if(isAb(c)){if(c.ab.occurStation)meta.push(esc(c.ab.occurStation));else if(c.ab.foundStation)meta.push('發現：'+esc(c.ab.foundStation));if(c.ab.foundSrc)meta.push(esc(c.ab.foundSrc));}
+  return `<button class="row" data-open="${c.id}"><div class="t">${hl(c.title,terms)}</div>
+  <div class="m">${badges(c)}<span>${meta.join('｜')}</span></div>${sn?`<div class="s">${sn}</div>`:''}</button>`;}
+function bindRows(root){root.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{location.hash='#/card/'+b.dataset.open;});}
+
+/* ---------- 首頁 ---------- */
+function viewHome(){setTitle('工作 APP');const m=$('#main');
+  m.innerHTML=`<div class="search"><input type="search" id="q" placeholder="搜尋：料號、站別、關鍵字…" value="${esc(Q)}" enterkeyhint="search"><button id="qx">清除</button></div><div id="hres"></div>`;
+  const q=$('#q');q.oninput=()=>{Q=q.value;renderHome();};$('#qx').onclick=()=>{Q='';q.value='';renderHome();q.focus();};renderHome();}
+function renderHome(){const box=$('#hres');QT=parseQuery(Q);const L=latest();
+  if(QT.length){const res=L.filter(c=>matchCard(c,QT)).sort((a,b)=>b.date.localeCompare(a.date));
+    box.innerHTML=`<h2>搜尋結果 <span class="n">${res.length}</span></h2>`+(res.length?res.map(c=>rowHtml(c,QT)).join(''):'<div class="empty">沒有符合的資料。可改用較短的關鍵字，或用空格分開多個關鍵字。</div>');
+    bindRows(box);return;}
+  const watch=L.filter(c=>watchReasons(c).length).sort((a,b)=>overdueScore(b)-overdueScore(a)||b.date.localeCompare(a.date));
+  const pins=L.filter(c=>c.pinned).sort((a,b)=>b.date.localeCompare(a.date));
+  const rec=PREF.recent.map(cardById).filter(Boolean).filter(isLatest).slice(0,8);
+  box.innerHTML=
+   `<h2>待我關注 <span class="n">${watch.length}</span></h2>`+(watch.length?watch.map(c=>rowHtml(c)+`<div class="s" style="margin:-6px 0 6px;color:var(--amb);font-weight:700;font-size:15px">${watchReasons(c).join('、')}</div>`).join(''):'<div class="empty">目前沒有需要關注的項目。</div>')+
+   `<h2>已釘選 <span class="n">${pins.length}</span></h2>`+(pins.length?pins.map(c=>rowHtml(c)).join(''):'<div class="empty">開會前常用的資料，在詳細頁按「釘選」就會出現在這裡。</div>')+
+   `<h2>最近查看</h2>`+(rec.length?rec.map(c=>rowHtml(c)).join(''):'<div class="empty">還沒有查看紀錄。</div>')+
+   (CARDS.length?'':'<div class="btns"><a class="btn pri" href="#/new" style="text-decoration:none">新增第一筆資料</a></div>')+
+   `<div class="ver">${APP_VERSION}｜共 ${L.length} 筆資料</div>`;
+  bindRows(box);}
+function overdueScore(c){return isAb(c)?overdueDays(c):0;}
+
+/* ---------- 全部資料 ---------- */
+let LF={type:'',src:'',st:'',status:''};
+function viewList(){setTitle('全部資料');const m=$('#main');const L=latest();
+  const chips=['',...TYPES].map(t=>`<button class="chip ${LF.type===t?'on':''}" data-t="${esc(t)}">${t||'全部'}（${t?L.filter(c=>c.type===t).length:L.length}）</button>`).join('');
+  const stations=DICT.stations.map(s=>s.name);
+  const ab=LF.type==='異常'?`<div class="filters">
+    <select id="fSrc"><option value="">發現來源：全部</option>${DICT.foundSrc.map(s=>`<option ${LF.src===s?'selected':''}>${esc(s)}</option>`).join('')}</select>
+    <select id="fSt"><option value="">發生站：全部</option>${stations.map(s=>`<option ${LF.st===s?'selected':''}>${esc(s)}</option>`).join('')}</select>
+    <select id="fStatus"><option value="">狀態：全部</option>${STATUSES.map(s=>`<option ${LF.status===s?'selected':''}>${s}</option>`).join('')}<option ${LF.status==='逾期'?'selected':''}>逾期</option><option ${LF.status==='未補完'?'selected':''}>未補完</option></select></div>`:'';
+  let res=L.filter(c=>!LF.type||c.type===LF.type);
+  if(LF.type==='異常'){res=res.filter(c=>(!LF.src||c.ab.foundSrc===LF.src)&&(!LF.st||c.ab.occurStation===LF.st)&&
+     (!LF.status||(LF.status==='逾期'?overdueDays(c)>0:LF.status==='未補完'?abMissing(c).length>0:abStatus(c)===LF.status)));}
+  res.sort((a,b)=>b.date.localeCompare(a.date)||b.updatedAt-a.updatedAt);
+  m.innerHTML=`<div class="chips">${chips}</div>${ab}<div class="m" style="color:var(--ink2);font-weight:700">${res.length} 筆</div>`+(res.length?res.map(c=>rowHtml(c)).join(''):'<div class="empty">這個分類還沒有資料。</div>');
+  m.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{LF.type=b.dataset.t;viewList();});
+  if(ab){$('#fSrc').onchange=e=>{LF.src=e.target.value;viewList();};$('#fSt').onchange=e=>{LF.st=e.target.value;viewList();};$('#fStatus').onchange=e=>{LF.status=e.target.value;viewList();};}
+  bindRows(m);}
+
+/* ---------- 詳細頁 ---------- */
+async function viewCard(id){const c=cardById(id);const m=$('#main');if(!c){m.innerHTML='<div class="empty">找不到這筆資料，可能已被刪除。</div>';return;}
+  PREF.recent=[id,...PREF.recent.filter(x=>x!==id)].slice(0,30);savePref();
+  setTitle(c.type);const T=QT;const H=t=>hl(t,T);const a=c.ab;
+  let h=`<h2 style="font-size:22px;margin-top:4px">${H(c.title)}</h2><div class="m" style="display:flex;flex-wrap:wrap;gap:6px">${badges(c)}</div>`;
+  const wr=watchReasons(c);if(wr.length)h+=`<div class="alert">待我關注：${wr.join('、')}</div>`;
+  if(!isLatest(c)){const nv=CARDS.filter(x=>x.vgroup===c.vgroup).sort((x,y)=>y.ver-x.ver)[0];h+=`<div class="alert red">這是舊版本 v${c.ver}。<a href="#/card/${nv.id}">開啟最新版 v${nv.ver}</a></div>`;}
+  if(c.images.length)h+=`<div class="hero"><img id="heroImg" alt="原圖"></div><div class="thumbs" id="thumbs"></div>`;
+  h+=`<div class="btns">
+    <button class="btn" id="bPin">${c.pinned?'取消釘選':'釘選'}</button>
+    <button class="btn" id="bWatch">${c.watch?'取消關注':'標記關注'}</button>
+    ${PREF.present?'':`<button class="btn pri" id="bEdit">編輯</button>`}</div>`;
+  h+=`<dl class="kv"><dt>日期</dt><dd>${esc(c.date)}</dd>${c.author&&!isHidden('author')?`<dt>撰寫人</dt><dd>${H(c.author)}</dd>`:''}
+    ${c.tags.map(t=>`<dt>${esc(t.k)}</dt><dd>${H(t.v)}</dd>`).join('')}<dt>資料來源</dt><dd>${esc(c.source)}</dd><dt>版本</dt><dd>v${c.ver}</dd></dl>`;
+  if(isAb(c)){
+    h+=`<div class="sec"><div class="st">異常描述</div><dl class="kv">
+      ${kv('發現來源',a.foundSrc,H)}${kv('發現站',a.foundStation,H)}${kv('發生站',a.occurStation||'（未填）',H)}${kv('機台',a.machine,H)}${kv('料號',a.partNo,H)}${kv('批號',a.lotNo,H)}
+      ${a.sampleQty!==''?kv('抽檢數',a.sampleQty+' pcs',H):''}${a.defectQty!==''?kv('不良數',a.defectQty+' pcs',H):''}${rate(a)?`<dt>不良率</dt><dd style="color:var(--red)">${rate(a)}</dd>`:''}
+      ${kv('不良項目',a.defectItem,H)}${kv('不良模式',a.defectMode,H)}</dl></div>`;
+    h+=`<div class="sec"><div class="st">異常原因：發生 → 流出</div>${a.chain.filter(Boolean).length?`<div class="chain">${a.chain.filter(Boolean).map(x=>`<span class="c">${H(x)}</span>`).join('<i>→</i>')}</div>`:'<div class="empty">尚未填寫原因鏈。</div>'}
+      <dl class="kv">${kv('發生原因',[a.occurCause.l1,a.occurCause.l2].filter(Boolean).join('／'),H)}${kv('發生說明',a.occurCause.text,H)}${kv('流出原因',[a.outCause.l1,a.outCause.l2].filter(Boolean).join('／'),H)}${kv('流出說明',a.outCause.text,H)}${kv('再現性驗證',a.verifyText,H)}${kv('圍堵結果',a.containResult,H)}</dl></div>`;
+    h+=`<div class="sec"><div class="st">改善對策（${a.cms.length}）</div>`;
+    if(noProof(c))h+=`<div class="alert red">沒有「發生」對策使用防呆或設備治具改善。</div>`;
+    if(!a.cms.length)h+='<div class="empty">尚未填寫對策。</div>';
+    a.cms.forEach((x,i)=>{const od=cmOverdue(x);h+=`<div class="cm ${od?'od':''}"><div class="h"><span class="no">${i+1}</span>
+      ${x.target?`<span class="b">${esc(x.target)}</span>`:''}${x.means?`<span class="b ${x.means==='防呆'||x.means==='設備治具改善'?'grn':x.means==='人員確認'?'amb':''}">${esc(x.means)}</span>`:''}
+      ${od?`<span class="b red">逾期 ${daysBetween(x.due,today())} 天</span>`:''}${cmEffDue(x)?'<span class="b amb">效果確認到期</span>':''}
+      <span style="flex:1"></span>${PREF.present?`<span class="b">${x.status}</span>`:`<select class="st" data-cm="${i}">${STATUSES.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>`}</div>
+      <div style="font-weight:700">${H(x.content)}</div><dl class="kv">${isHidden('owner')?'':kv('責任人',x.owner,H)}${kv('預計完成',x.due,H)}${kv('實際完成',x.done,H)}${kv('效果確認方法',x.effMethod,H)}${kv('確認日',x.effDue,H)}${kv('確認結果',x.effResult,H)}</dl></div>`;});
+    h+='</div>';
+    if(!isHidden('review')){const it=a.review.items;h+=`<div class="sec priv"><div class="st">講評（展示模式可隱藏）</div>${DICT.rubric.map(q=>`<div class="rub"><span class="q">${esc(q)}</span><b>${it[q]==='ok'?'✅':it[q]==='part'?'△ 部分':it[q]==='ng'?'❌':'—'}</b></div>`).join('')}${a.review.text?`<p>${H(a.review.text)}</p>`:''}</div>`;}
+  }
+  if(c.fullText)h+=`<div class="sec"><div class="st">全文／關鍵字</div><p style="white-space:pre-wrap">${H(c.fullText)}</p></div>`;
+  if(c.note&&!isHidden('note'))h+=`<div class="sec priv"><div class="st">主管備註</div><p style="white-space:pre-wrap">${H(c.note)}</p></div>`;
+  const sus=suspects(c);
+  if(sus.length)h+=`<div class="sec priv"><div class="st">疑似重複（同發生站＋同不良項目）${sus.length} 筆</div>${sus.map(x=>rowHtml(x)+(PREF.present?'':`<div class="btns" style="margin:0 0 8px"><button class="btn sm" data-rec="${x.id}">確認為同類再發</button></div>`)).join('')}</div>`;
+  const rels=c.relations.map(r=>({r,x:cardById(r.id)})).filter(o=>o.x);
+  h+=`<div class="sec"><div class="st">關聯資料（${rels.length}）</div>${rels.map(o=>`<div style="display:flex;gap:6px;align-items:center">${o.r.kind==='再發'?'<span class="b red">同類再發</span>':''}<div style="flex:1">${rowHtml(o.x)}</div>${PREF.present?'':`<button class="btn sm dan" data-unrel="${o.x.id}">移除</button>`}</div>`).join('')}
+    ${PREF.present?'':'<div class="btns"><button class="btn sm" id="bRel">＋新增關聯</button></div>'}</div>`;
+  const vs=CARDS.filter(x=>x.vgroup===c.vgroup&&x.id!==c.id).sort((x,y)=>y.ver-x.ver);
+  if(vs.length)h+=`<div class="sec"><div class="st">其他版本</div>${vs.map(x=>rowHtml(x)).join('')}</div>`;
+  if(!PREF.present)h+=`<div class="btns"><button class="btn" id="bVer">建立新版本</button><button class="btn dan" id="bDel">刪除</button></div>`;
+  m.innerHTML=h;window.scrollTo(0,0);bindRows(m);
+  if(c.images.length){const th=$('#thumbs');const urls=await Promise.all(c.images.map(getImg));$('#heroImg').src=urls[0];$('#heroImg').onclick=()=>openViewer(urls,0);
+    if(urls.length>1){th.innerHTML=urls.map((u,i)=>`<div class="th"><img src="${u}" data-i="${i}" alt="第${i+1}頁"></div>`).join('');th.querySelectorAll('img').forEach(im=>im.onclick=()=>openViewer(urls,+im.dataset.i));}}
+  $('#bPin').onclick=async()=>{c.pinned=!c.pinned;await saveCard(c);viewCard(id);};
+  $('#bWatch').onclick=async()=>{c.watch=!c.watch;await saveCard(c);viewCard(id);};
+  if($('#bEdit'))$('#bEdit').onclick=()=>{location.hash='#/edit/'+id;};
+  m.querySelectorAll('select[data-cm]').forEach(s=>s.onchange=async()=>{const x=c.ab.cms[+s.dataset.cm];x.status=s.value;if(s.value==='已結案'&&!x.done)x.done=today();await saveCard(c);toast('已更新：'+s.value);viewCard(id);});
+  m.querySelectorAll('[data-rec]').forEach(b=>b.onclick=async()=>{await link(c,cardById(b.dataset.rec),'再發');toast('已連結為同類再發');viewCard(id);});
+  m.querySelectorAll('[data-unrel]').forEach(b=>b.onclick=async()=>{if(!confirm('移除這筆關聯？'))return;await unlink(c,cardById(b.dataset.unrel));viewCard(id);});
+  if($('#bRel'))$('#bRel').onclick=()=>pickCard(c,async x=>{await link(c,x,'關聯');toast('已建立關聯');viewCard(id);});
+  if($('#bVer'))$('#bVer').onclick=()=>newVersion(c);
+  if($('#bDel'))$('#bDel').onclick=()=>delCard(c);}
+function kv(k,v,H){return v===''||v==null?'':`<dt>${esc(k)}</dt><dd>${H(String(v))}</dd>`;}
+function rate(a){const s=parseFloat(a.sampleQty),d=parseFloat(a.defectQty);return s>0&&d>=0&&a.defectQty!==''?(d/s*100).toFixed(2)+'%':'';}
+
+async function link(a,b,kind){if(!a||!b)return;for(const[x,y]of[[a,b],[b,a]]){x.relations=x.relations.filter(r=>r.id!==y.id);x.relations.push({id:y.id,kind});await saveCard(x);}}
+async function unlink(a,b){if(!a||!b)return;a.relations=a.relations.filter(r=>r.id!==b.id);b.relations=b.relations.filter(r=>r.id!==a.id);await saveCard(a);await saveCard(b);}
+function pickCard(self,cb){const md=document.createElement('div');md.className='modal';
+  md.innerHTML=`<div class="box"><h3 style="margin-top:0">選擇要關聯的資料</h3><input type="search" id="pq" placeholder="搜尋…"><div id="pres"></div><div class="btns"><button class="btn" id="pc">取消</button></div></div>`;
+  document.body.appendChild(md);const ids=new Set([self.id,...self.relations.map(r=>r.id)]);
+  const run=()=>{const t=parseQuery($('#pq').value);const L=latest().filter(x=>!ids.has(x.id)&&x.vgroup!==self.vgroup&&(!t.length||matchCard(x,t))).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40);
+    $('#pres').innerHTML=L.length?L.map(x=>rowHtml(x,t)).join(''):'<div class="empty">沒有可選的資料。</div>';
+    $('#pres').querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{md.remove();cb(cardById(b.dataset.open));});};
+  $('#pq').oninput=run;$('#pc').onclick=()=>md.remove();md.onclick=e=>{if(e.target===md)md.remove();};run();}
+async function newVersion(c){if(!confirm('以這筆為基礎建立 v'+(Math.max(...CARDS.filter(x=>x.vgroup===c.vgroup).map(x=>x.ver))+1)+'？\n舊版會保留。'))return;
+  const n=normCard(JSON.parse(JSON.stringify(c)));n.id=uid();n.ver=Math.max(...CARDS.filter(x=>x.vgroup===c.vgroup).map(x=>x.ver))+1;n.createdAt=Date.now();n.pinned=c.pinned;c.pinned=false;
+  const imgs=[];for(const iid of c.images){const d=await getImg(iid);const ni=uid();await putImg(ni,d);imgs.push(ni);}n.images=imgs;n.relations=[];
+  await saveCard(c);await saveCard(n);for(const r of c.relations){const x=cardById(r.id);if(x)await link(n,x,r.kind);}
+  toast('已建立 v'+n.ver);location.hash='#/edit/'+n.id;}
+async function delCard(c){if(!confirm('刪除「'+c.title+'」？\n刪除後無法復原。'))return;
+  for(const r of c.relations){const x=cardById(r.id);if(x){x.relations=x.relations.filter(y=>y.id!==c.id);await saveCard(x);}}
+  for(const i of c.images){await DB.del('images',i);IMG.delete(i);}await DB.del('cards',c.id);CARDS=CARDS.filter(x=>x.id!==c.id);
+  PREF.recent=PREF.recent.filter(x=>x!==c.id);savePref();toast('已刪除');location.hash='#/home';}
+
+/* ---------- 新增／編輯 ---------- */
+let FMODE='quick', FIMGS=[], FNEWIMG=new Map(), FID=null;
+async function viewEdit(id){
+  if(PREF.present){toast('展示模式下不能編輯');location.hash=id?'#/card/'+id:'#/home';return;}
+  if(!F||FID!==(id||'new')){FID=id||'new';
+    if(id){const c=cardById(id);if(!c){$('#main').innerHTML='<div class="empty">找不到這筆資料。</div>';return;}F=normCard(JSON.parse(JSON.stringify(c)));FMODE='full';}
+    else{F=newCard('異常');FMODE='quick';}
+    FNEWIMG=new Map();FIMGS=[];for(const i of F.images)FIMGS.push({id:i,data:await getImg(i)});}
+  setTitle(id?'編輯':'新增');renderForm();}
+const opts=(list,v,ph)=>`<option value="">${ph||'請選擇'}</option>`+list.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');
+function dictSel(path,list,v,ph,newKind){return `<select data-b="${path}"${newKind?` data-new="${newKind}"`:''}>${opts(list,v,ph)}${newKind?'<option value="__new__">＋新增…</option>':''}</select>`;}
+function inp(path,v,ph,type){return `<input type="${type||'text'}" data-b="${path}" value="${esc(v)}" placeholder="${esc(ph||'')}"${type==='number'?' inputmode="decimal"':''}>`;}
+function ta(path,v,ph){return `<textarea data-b="${path}" placeholder="${esc(ph||'')}">${esc(v)}</textarea>`;}
+const lab=(t,req,hint)=>`<label class="f">${t}${req?' <span class="req">＊</span>':''}${hint?` <span class="hint">${hint}</span>`:''}</label>`;
+function authorsList(){return [...new Set(CARDS.map(c=>c.author).filter(Boolean))];}
+function ownersList(){return [...new Set(CARDS.flatMap(c=>c.ab.cms.map(x=>x.owner)).filter(Boolean))];}
+function stationNames(){return DICT.stations.map(s=>s.name);}
+function defectNames(){return DICT.defects.map(d=>d.name);}
+function renderForm(){const m=$('#main');const a=F.ab;const full=FMODE==='full';const ab=isAb(F);const sy=window.scrollY;
+  let h=`<div class="mode"><button data-mode="quick" class="${full?'':'on'}">快速收存</button><button data-mode="full" class="${full?'on':''}">完整管理</button></div>
+  <div class="m" style="color:var(--ink2);font-size:15px">${full?'填寫全部欄位。異常未填完整的項目會進「待我關注」。':'只填必要欄位，之後再補完整。'}</div>
+  ${lab('類型',1)}${dictSel('type',TYPES,F.type,'請選擇')}
+  ${lab('標題',1)}${inp('title',F.title,ab?'例：IPQC 巡線異常：未噴塗':'')}
+  <div class="grid2"><div>${lab('日期',1)}${inp('date',F.date,'','date')}</div><div>${lab('撰寫人',ab)}<input type="text" data-b="author" value="${esc(F.author)}" list="dlAuthor"></div></div>
+  <datalist id="dlAuthor">${authorsList().map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+  ${lab('原圖',0,'可多張')}<div class="thumbs" id="fthumbs">${FIMGS.map((o,i)=>`<div class="th"><img src="${o.data}" alt=""><button class="x" data-rmimg="${i}">✕</button></div>`).join('')}</div>
+  <div class="btns" style="margin-top:4px"><label class="btn sm">＋選擇圖片<input type="file" accept="image/*" multiple id="fimg" hidden></label></div>`;
+  if(ab){h+=`<div class="sec"><div class="st">異常：快速收存必填</div><div class="grid2">
+    <div>${lab('發現來源')}${dictSel('ab.foundSrc',DICT.foundSrc,a.foundSrc)}</div>
+    <div>${lab('發現站',1)}${dictSel('ab.foundStation',stationNames(),a.foundStation,'請選擇','station')}</div></div>
+    ${lab('不良項目',1)}${dictSel('ab.defectItem',defectNames(),a.defectItem,'請選擇','defect')}</div>`;}
+  h+=`${lab('標籤',0,'分類＋值')}<div id="ftags">${F.tags.map((t,i)=>`<div class="tagrow"><select data-b="tags.${i}.k">${opts(DICT.tagKeys,t.k,'分類')}</select><input type="text" data-b="tags.${i}.v" value="${esc(t.v)}" placeholder="值"><button data-rmtag="${i}">✕</button></div>`).join('')}</div>
+  <div class="btns" style="margin-top:6px"><button class="btn sm" id="addTag">＋標籤</button></div>`;
+  if(full&&ab){
+    h+=`<div class="sec"><div class="st">異常描述</div><div class="grid2">
+      <div>${lab('發生站',0,'完整管理必填')}${dictSel('ab.occurStation',stationNames(),a.occurStation,'請選擇','station')}</div><div>${lab('機台')}${inp('ab.machine',a.machine,'例：06 號機')}</div>
+      <div>${lab('料號')}${inp('ab.partNo',a.partNo)}</div><div>${lab('批號')}${inp('ab.lotNo',a.lotNo)}</div></div>
+      <div class="grid3"><div>${lab('抽檢數')}${inp('ab.sampleQty',a.sampleQty,'','number')}</div><div>${lab('不良數')}${inp('ab.defectQty',a.defectQty,'','number')}</div><div>${lab('不良率')}<div style="padding:12px 0;font-weight:800;color:var(--red)" id="frate">${rate(a)||'自動計算'}</div></div></div>
+      ${lab('不良模式',0,'原文寫法，可多種')}${inp('ab.defectMode',a.defectMode,'例：未完全噴塗、整面未噴塗')}
+      ${lab('圍堵結果')}${inp('ab.containResult',a.containResult,'例：100% 挑選，挑出 8 pcs')}</div>
+    <div class="sec"><div class="st">異常原因：發生 → 流出</div>${lab('原因鏈',0,'依序一格一步')}
+      <div id="fchain">${a.chain.map((s,i)=>`<div class="steprow"><input type="text" data-b="ab.chain.${i}" value="${esc(s)}" placeholder="第 ${i+1} 步"><button data-rmstep="${i}">✕</button></div>`).join('')}</div>
+      <div class="btns" style="margin-top:6px"><button class="btn sm" id="addStep">＋一步</button></div>
+      <div class="grid2"><div>${lab('發生原因：第一層')}${dictSel('ab.occurCause.l1',CAUSE_L1,a.occurCause.l1)}</div><div>${lab('第二層')}${dictSel('ab.occurCause.l2',DICT.causeL2,a.occurCause.l2,'請選擇','cause')}</div></div>
+      ${inp('ab.occurCause.text',a.occurCause.text,'發生原因說明')}
+      <div class="grid2"><div>${lab('流出原因：第一層')}${dictSel('ab.outCause.l1',CAUSE_L1,a.outCause.l1)}</div><div>${lab('第二層')}${dictSel('ab.outCause.l2',DICT.causeL2,a.outCause.l2,'請選擇','cause')}</div></div>
+      ${inp('ab.outCause.text',a.outCause.text,'流出原因說明')}
+      ${lab('再現性驗證')}${ta('ab.verifyText',a.verifyText,'驗證方式與結果')}</div>
+    <div class="sec"><div class="st">改善對策</div><datalist id="dlOwner">${ownersList().map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+      ${a.cms.map((x,i)=>`<div class="cm"><div class="h"><span class="no">${i+1}</span><span style="flex:1"></span><button class="btn sm dan" data-rmcm="${i}">刪除</button></div>
+        <div class="grid2"><div>${lab('對象')}${dictSel(`ab.cms.${i}.target`,CM_TARGETS,x.target)}</div><div>${lab('手段')}${dictSel(`ab.cms.${i}.means`,CM_MEANS,x.means)}</div></div>
+        ${lab('內容')}${ta(`ab.cms.${i}.content`,x.content)}
+        <div class="grid2"><div>${lab('責任人')}<input type="text" data-b="ab.cms.${i}.owner" value="${esc(x.owner)}" list="dlOwner"></div><div>${lab('狀態')}<select data-b="ab.cms.${i}.status">${STATUSES.map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+        <div>${lab('預計完成')}${inp(`ab.cms.${i}.due`,x.due,'','date')}</div><div>${lab('實際完成')}${inp(`ab.cms.${i}.done`,x.done,'','date')}</div></div>
+        ${lab('效果確認方法')}${inp(`ab.cms.${i}.effMethod`,x.effMethod,'例：追蹤 30 天無再發')}
+        <div class="grid2"><div>${lab('確認日')}${inp(`ab.cms.${i}.effDue`,x.effDue,'','date')}</div><div>${lab('確認結果')}${inp(`ab.cms.${i}.effResult`,x.effResult)}</div></div></div>`).join('')}
+      <div class="btns"><button class="btn sm" id="addCm">＋對策</button></div></div>
+    <div class="sec priv"><div class="st">講評（展示模式可隱藏）</div>
+      ${DICT.rubric.map((q,qi)=>{const v=a.review.items[q];return `<div class="rub"><span class="q">${esc(q)}</span>${[['ok','✅'],['part','△'],['ng','❌']].map(([k,s])=>`<button class="${k} ${v===k?'on':''}" data-rub="${qi}" data-v="${k}">${s}</button>`).join('')}</div>`;}).join('')}
+      ${lab('講評內容')}${ta('ab.review.text',a.review.text,'給撰寫人的回饋')}</div>`;}
+  h+=`${lab('全文／關鍵字',0,'選填，讓搜尋找得到圖片裡的字')}${ta('fullText',F.fullText,'')}`;
+  if(full)h+=`${lab('主管備註',0,'展示模式可隱藏')}${ta('note',F.note,'')}${lab('資料來源')}${dictSel('source',SOURCES,F.source)}`;
+  h+=`<div class="btns" style="margin-top:20px"><button class="btn pri" id="fSave" style="flex:1">儲存</button><button class="btn" id="fCancel">取消</button></div>`;
+  m.innerHTML=h;window.scrollTo(0,sy);bindForm();}
+function setPath(o,p,v){const k=p.split('.');let t=o;for(let i=0;i<k.length-1;i++)t=t[k[i]];t[k[k.length-1]]=v;}
+function bindForm(){const m=$('#main');
+  m.oninput=e=>{const b=e.target.dataset&&e.target.dataset.b;if(!b||e.target.tagName==='SELECT')return;setPath(F,b,e.target.value);
+    if(b==='ab.sampleQty'||b==='ab.defectQty'){const r=$('#frate');if(r)r.textContent=rate(F.ab)||'自動計算';}};
+  m.onchange=e=>{const el=e.target;const b=el.dataset&&el.dataset.b;if(!b||el.tagName!=='SELECT')return;
+    if(el.value==='__new__'){const nm=(prompt('新增項目名稱（會先列為候選，之後到設定確認）')||'').trim();
+      if(nm)addDictItem(el.dataset.new,nm);setPath(F,b,nm||'');renderForm();return;}
+    setPath(F,b,el.value);if(b==='type')renderForm();};
+  m.querySelectorAll('[data-mode]').forEach(x=>x.onclick=()=>{FMODE=x.dataset.mode;renderForm();});
+  $('#fimg').onchange=async e=>{const fs=[...e.target.files];toast('處理圖片中…');for(const f of fs){const d=await compress(f);const id=uid();FIMGS.push({id,data:d});FNEWIMG.set(id,d);}renderForm();};
+  m.querySelectorAll('[data-rmimg]').forEach(x=>x.onclick=()=>{FIMGS.splice(+x.dataset.rmimg,1);renderForm();});
+  $('#addTag').onclick=()=>{F.tags.push({k:'',v:''});renderForm();};
+  m.querySelectorAll('[data-rmtag]').forEach(x=>x.onclick=()=>{F.tags.splice(+x.dataset.rmtag,1);renderForm();});
+  if($('#addStep'))$('#addStep').onclick=()=>{F.ab.chain.push('');renderForm();};
+  m.querySelectorAll('[data-rmstep]').forEach(x=>x.onclick=()=>{F.ab.chain.splice(+x.dataset.rmstep,1);renderForm();});
+  if($('#addCm'))$('#addCm').onclick=()=>{F.ab.cms.push(newCm());renderForm();};
+  m.querySelectorAll('[data-rmcm]').forEach(x=>x.onclick=()=>{if(confirm('刪除這個對策？')){F.ab.cms.splice(+x.dataset.rmcm,1);renderForm();}});
+  m.querySelectorAll('[data-rub]').forEach(x=>x.onclick=()=>{const q=DICT.rubric[+x.dataset.rub];const it=F.ab.review.items;it[q]=it[q]===x.dataset.v?'':x.dataset.v;renderForm();});
+  $('#fSave').onclick=saveForm;
+  $('#fCancel').onclick=()=>{const id=FID;F=null;FID=null;location.hash=id&&id!=='new'?'#/card/'+id:'#/home';};}
+function addDictItem(kind,nm){if(kind==='station'&&!DICT.stations.some(s=>s.name===nm))DICT.stations.push({name:nm,cand:true});
+  if(kind==='defect'&&!DICT.defects.some(s=>s.name===nm))DICT.defects.push({name:nm,syn:[],cand:true});
+  if(kind==='cause'&&!DICT.causeL2.includes(nm))DICT.causeL2.push(nm);saveDict();}
+async function saveForm(){const miss=[];if(!F.type)miss.push('類型');if(!F.title.trim())miss.push('標題');if(!F.date)miss.push('日期');
+  if(isAb(F)){if(!F.author.trim())miss.push('撰寫人');if(!F.ab.foundStation)miss.push('發現站');if(!F.ab.defectItem)miss.push('不良項目');}
+  if(miss.length){alert('請填寫：'+miss.join('、'));return;}
+  F.title=F.title.trim();F.tags=F.tags.filter(t=>t.k&&t.v.trim());F.ab.chain=F.ab.chain.map(s=>s.trim()).filter(Boolean);
+  const keep=new Set(FIMGS.map(o=>o.id));
+  for(const o of FIMGS)if(FNEWIMG.has(o.id))await putImg(o.id,o.data);
+  const old=cardById(F.id);if(old)for(const i of old.images)if(!keep.has(i)){await DB.del('images',i);IMG.delete(i);}
+  F.images=FIMGS.map(o=>o.id);if(!isAb(F))F.ab=Object.assign(newAb(),{});const id=F.id;await saveCard(F);F=null;FID=null;toast('已儲存');location.hash='#/card/'+id;}
+function compress(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const MX=2000;let w=im.width,h=im.height;
+  if(Math.max(w,h)>MX){const s=MX/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);g.drawImage(im,0,0,w,h);res(cv.toDataURL('image/jpeg',0.82));};im.onerror=rej;im.src=r.result;};r.onerror=rej;r.readAsDataURL(file);});}
+
+/* ---------- 圖片檢視（縮放、平移、旋轉） ---------- */
+function openViewer(urls,idx){const v=document.createElement('div');v.className='viewer';
+  v.innerHTML=`<div class="bar"><button id="vx">關閉</button><span id="vn"></span><button id="vr">旋轉</button>${urls.length>1?'<button id="vp">‹</button><button id="vnx">›</button>':''}</div><img id="vi" alt="">`;
+  document.body.appendChild(v);const img=v.querySelector('#vi');let s=1,tx=0,ty=0,base=1;const P=new Map();let st=null,lastTap=0;
+  const apply=()=>{img.style.transform=`translate(${tx}px,${ty}px) scale(${s})`;};
+  const fit=()=>{const W=v.clientWidth,H=v.clientHeight-60;const iw=img.naturalWidth,ih=img.naturalHeight;if(!iw)return;
+    base=Math.min(W/iw,H/ih);const w=iw*base,h=ih*base;img.style.width=w+'px';img.style.height=h+'px';s=1;tx=(W-w)/2;ty=60+(H-h)/2;apply();};
+  const rotate=()=>{const cv=document.createElement('canvas');cv.width=img.naturalHeight;cv.height=img.naturalWidth;const g=cv.getContext('2d');
+    g.translate(cv.width,0);g.rotate(Math.PI/2);g.drawImage(img,0,0);img.onload=fit;img.src=cv.toDataURL('image/jpeg',0.9);};
+  const load=i=>{idx=(i+urls.length)%urls.length;img.onload=fit;img.src=urls[idx];v.querySelector('#vn').textContent=urls.length>1?`${idx+1} / ${urls.length}`:'';};
+  v.querySelector('#vx').onclick=()=>v.remove();v.querySelector('#vr').onclick=rotate;
+  if(urls.length>1){v.querySelector('#vp').onclick=()=>load(idx-1);v.querySelector('#vnx').onclick=()=>load(idx+1);}
+  v.addEventListener('pointerdown',e=>{if(e.target.tagName==='BUTTON')return;v.setPointerCapture(e.pointerId);P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(P.size===1){const now=Date.now();if(now-lastTap<300){const k=s>1?1/s:2.5;zoomAt(e.clientX,e.clientY,k);lastTap=0;}else lastTap=now;}
+    st={s,tx,ty,pts:[...P.values()].map(p=>({...p}))};});
+  v.addEventListener('pointermove',e=>{if(!P.has(e.pointerId)||!st)return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});const pts=[...P.values()];
+    if(pts.length>=2&&st.pts.length>=2){const d0=Math.hypot(st.pts[0].x-st.pts[1].x,st.pts[0].y-st.pts[1].y),d1=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+      const c0={x:(st.pts[0].x+st.pts[1].x)/2,y:(st.pts[0].y+st.pts[1].y)/2},c1={x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2};
+      const ns=Math.min(8,Math.max(1,st.s*d1/d0));const k=ns/st.s;s=ns;tx=c1.x-(c0.x-st.tx)*k;ty=c1.y-(c0.y-st.ty)*k;apply();}
+    else if(pts.length===1&&s>1){tx=st.tx+pts[0].x-st.pts[0].x;ty=st.ty+pts[0].y-st.pts[0].y;apply();}});
+  const up=e=>{if(!P.has(e.pointerId))return;const p0=st&&st.pts[0];P.delete(e.pointerId);
+    if(P.size===0&&st&&st.pts.length===1&&s===1&&urls.length>1&&p0){const dx=e.clientX-p0.x;if(Math.abs(dx)>70)load(idx+(dx<0?1:-1));}
+    if(s<=1.01&&P.size===0)fit();st={s,tx,ty,pts:[...P.values()].map(p=>({...p}))};};
+  v.addEventListener('pointerup',up);v.addEventListener('pointercancel',up);
+  function zoomAt(x,y,k){const ns=Math.min(8,Math.max(1,s*k));k=ns/s;tx=x-(x-tx)*k;ty=y-(y-ty)*k;s=ns;if(s===1)fit();else apply();}
+  load(idx);}
+
+/* ---------- 設定 ---------- */
+function viewSettings(){setTitle('設定');const m=$('#main');const used=usage();
+  const stList=DICT.stations.map((s,i)=>`<li><span class="nm">${esc(s.name)}</span>${s.cand?'<span class="b amb">候選</span>':''}<span class="b">${used.st[s.name]||0} 筆</span>
+    ${s.cand?`<button class="btn sm" data-stok="${i}">納入正式</button>`:''}<button class="btn sm" data-stmv="${i}">改名／合併</button><button class="btn sm dan" data-stdel="${i}">刪除</button></li>`).join('');
+  const dfList=DICT.defects.map((d,i)=>`<li><span class="nm">${esc(d.name)}${d.syn.length?`<div style="font-weight:500;font-size:15px;color:var(--ink2)">同義詞：${esc(d.syn.join('、'))}</div>`:''}</span>${d.cand?'<span class="b amb">候選</span>':''}<span class="b">${used.df[d.name]||0} 筆</span>
+    ${d.cand?`<button class="btn sm" data-dfok="${i}">納入正式</button>`:''}<button class="btn sm" data-dfsyn="${i}">同義詞</button><button class="btn sm" data-dfmv="${i}">改名／合併</button><button class="btn sm dan" data-dfdel="${i}">刪除</button></li>`).join('');
+  const simple=(key,title)=>`<h3>${title}</h3><ul>${DICT[key].map((x,i)=>`<li><span class="nm">${esc(x)}</span><button class="btn sm dan" data-sdel="${key}:${i}">刪除</button></li>`).join('')}</ul><button class="btn sm" data-sadd="${key}">＋新增</button>`;
+  m.innerHTML=`<div class="sec"><div class="st">展示規則</div><div class="m" style="color:var(--ink2);font-size:16px">開啟「展示模式」時隱藏以下欄位，搜尋也不會搜到。</div>
+    ${HIDEABLE.map(([k,t])=>`<label class="check"><input type="checkbox" data-hide="${k}" ${PREF.hidden.includes(k)?'checked':''}>${t}</label>`).join('')}</div>
+  <div class="sec dict"><div class="st">字典</div>
+    <h3>工程站</h3><ul>${stList}</ul><button class="btn sm" id="stAdd">＋新增工程站</button>
+    <h3>不良項目</h3><ul>${dfList}</ul><button class="btn sm" id="dfAdd">＋新增不良項目</button>
+    ${simple('foundSrc','發現來源')}${simple('causeL2','原因第二層')}${simple('rubric','講評檢核項目')}${simple('tagKeys','標籤分類')}</div>
+  ${PREF.present?'':`<div class="sec"><div class="st">講評統計（依撰寫人）</div>${rubricStats()}</div>`}
+  <div class="sec"><div class="st">匯入</div><div class="m" style="color:var(--ink2);font-size:16px">可匯入 AI 產生的 JSON 或完整備份檔。已存在的資料只補空白欄位，不覆蓋你填寫的內容。</div>
+    <div class="btns"><label class="btn">選擇 JSON 檔<input type="file" accept=".json,application/json" id="impFile" hidden></label><button class="btn" id="impPaste">貼上 JSON</button><button class="btn" id="aiPrompt">複製 AI 轉檔說明</button></div></div>
+  <div class="sec"><div class="st">備份與還原</div><div class="m" style="color:var(--ink2);font-size:16px" id="stor">計算儲存空間中…</div>
+    <div class="btns"><button class="btn pri" id="bk">下載完整備份</button><label class="btn dan">從備份還原<input type="file" accept=".json,application/json" id="rsFile" hidden></label></div></div>
+  <div class="ver">工作 APP ${APP_VERSION}</div>`;
+  m.querySelectorAll('[data-hide]').forEach(x=>x.onchange=()=>{const k=x.dataset.hide;PREF.hidden=x.checked?[...new Set([...PREF.hidden,k])]:PREF.hidden.filter(y=>y!==k);savePref();});
+  const re=()=>{saveDict();viewSettings();};
+  $('#stAdd').onclick=()=>{const n=(prompt('工程站名稱')||'').trim();if(n&&!DICT.stations.some(s=>s.name===n)){DICT.stations.push({name:n,cand:false});re();}};
+  $('#dfAdd').onclick=()=>{const n=(prompt('不良項目名稱')||'').trim();if(n&&!DICT.defects.some(s=>s.name===n)){DICT.defects.push({name:n,syn:[],cand:false});re();}};
+  m.querySelectorAll('[data-stok]').forEach(x=>x.onclick=()=>{DICT.stations[+x.dataset.stok].cand=false;re();});
+  m.querySelectorAll('[data-dfok]').forEach(x=>x.onclick=()=>{DICT.defects[+x.dataset.dfok].cand=false;re();});
+  m.querySelectorAll('[data-stmv]').forEach(x=>x.onclick=async()=>{const s=DICT.stations[+x.dataset.stmv];const n=(prompt('改成（輸入已存在的站名＝合併）',s.name)||'').trim();if(!n||n===s.name)return;
+    await renameStation(s.name,n);const ex=DICT.stations.find(y=>y.name===n);if(ex){DICT.stations=DICT.stations.filter(y=>y!==s);}else s.name=n;re();toast('已更新');});
+  m.querySelectorAll('[data-dfmv]').forEach(x=>x.onclick=async()=>{const d=DICT.defects[+x.dataset.dfmv];const n=(prompt('改成（輸入已存在的項目＝合併，原名會變成同義詞）',d.name)||'').trim();if(!n||n===d.name)return;
+    await renameDefect(d.name,n);const ex=DICT.defects.find(y=>y.name===n);if(ex){ex.syn=[...new Set([...ex.syn,d.name,...d.syn])];DICT.defects=DICT.defects.filter(y=>y!==d);}else{d.syn=[...new Set([...d.syn,d.name])].filter(y=>y!==n);d.name=n;}re();toast('已更新');});
+  m.querySelectorAll('[data-dfsyn]').forEach(x=>x.onclick=()=>{const d=DICT.defects[+x.dataset.dfsyn];const v=prompt('同義詞（用頓號或逗號分開）',d.syn.join('、'));if(v==null)return;d.syn=v.split(/[、,，\s]+/).map(s=>s.trim()).filter(Boolean);re();});
+  m.querySelectorAll('[data-stdel]').forEach(x=>x.onclick=()=>{const s=DICT.stations[+x.dataset.stdel];if(used.st[s.name]){alert('有 '+used.st[s.name]+' 筆資料使用「'+s.name+'」。請改用「改名／合併」。');return;}if(confirm('刪除「'+s.name+'」？')){DICT.stations.splice(+x.dataset.stdel,1);re();}});
+  m.querySelectorAll('[data-dfdel]').forEach(x=>x.onclick=()=>{const d=DICT.defects[+x.dataset.dfdel];if(used.df[d.name]){alert('有 '+used.df[d.name]+' 筆資料使用「'+d.name+'」。請改用「改名／合併」。');return;}if(confirm('刪除「'+d.name+'」？')){DICT.defects.splice(+x.dataset.dfdel,1);re();}});
+  m.querySelectorAll('[data-sadd]').forEach(x=>x.onclick=()=>{const n=(prompt('新增項目')||'').trim();if(n&&!DICT[x.dataset.sadd].includes(n)){DICT[x.dataset.sadd].push(n);re();}});
+  m.querySelectorAll('[data-sdel]').forEach(x=>x.onclick=()=>{const[k,i]=x.dataset.sdel.split(':');if(confirm('刪除「'+DICT[k][+i]+'」？\n已填寫的資料不受影響。')){DICT[k].splice(+i,1);re();}});
+  $('#impFile').onchange=async e=>{const f=e.target.files[0];if(f)await importText(await f.text());};
+  $('#impPaste').onclick=()=>pasteBox();
+  $('#aiPrompt').onclick=async()=>{try{await navigator.clipboard.writeText(AI_PROMPT);toast('已複製，貼給 AI 並附上報告圖');}catch(e){alert(AI_PROMPT);}};
+  $('#bk').onclick=backup;$('#rsFile').onchange=async e=>{const f=e.target.files[0];if(f)await restore(await f.text());};
+  if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(r=>{$('#stor').textContent=`已使用約 ${(r.usage/1048576).toFixed(1)} MB。資料只存在這支手機，請定期下載備份。`;});}
+function usage(){const st={},df={};for(const c of CARDS){if(!isAb(c))continue;for(const s of new Set([c.ab.foundStation,c.ab.occurStation].filter(Boolean)))st[s]=(st[s]||0)+1;if(c.ab.defectItem)df[c.ab.defectItem]=(df[c.ab.defectItem]||0)+1;}return {st,df};}
+async function renameStation(a,b){for(const c of CARDS){let ch=false;if(c.ab.foundStation===a){c.ab.foundStation=b;ch=true;}if(c.ab.occurStation===a){c.ab.occurStation=b;ch=true;}
+  c.tags.forEach(t=>{if(t.k==='工程站'&&t.v===a){t.v=b;ch=true;}});if(ch)await saveCard(c);}}
+async function renameDefect(a,b){for(const c of CARDS)if(c.ab.defectItem===a){c.ab.defectItem=b;await saveCard(c);}}
+function rubricStats(){const by={};for(const c of latest()){if(!isAb(c)||!c.author)continue;const it=c.ab.review.items;if(!Object.values(it).some(Boolean))continue;
+  const o=by[c.author]=by[c.author]||{n:0,q:{}};o.n++;DICT.rubric.forEach(q=>{const r=o.q[q]=o.q[q]||{ok:0,all:0};if(it[q]){r.all++;if(it[q]==='ok')r.ok++;}});}
+  const names=Object.keys(by);if(!names.length)return '<div class="empty">還沒有講評過的報告。</div>';
+  return `<div class="m" style="color:var(--ink2);font-size:15px">數字為 ✅ 次數／已評次數</div><div class="wrap"><table class="stat"><tr><th>檢核項目</th>${names.map(n=>`<th>${esc(n)}<br>(${by[n].n} 份)</th>`).join('')}</tr>
+  ${DICT.rubric.map(q=>`<tr><td style="text-align:left">${esc(q)}</td>${names.map(n=>{const r=by[n].q[q];return `<td>${r&&r.all?r.ok+'／'+r.all:'—'}</td>`;}).join('')}</tr>`).join('')}</table></div>`;}
+
+/* ---------- 匯入／備份 ---------- */
+const AI_PROMPT=`請把附上的一頁報告圖轉成「工作 APP」匯入用 JSON。只輸出 JSON，不要其他文字。
+格式：
+{"app":"work-app","cards":[{
+ "type":"異常｜製程改善｜工程試做｜專案｜預算/CAPEX/營運｜其他 (擇一)",
+ "title":"報告標題","date":"YYYY-MM-DD","author":"撰寫人（看不出來就留空）",
+ "tags":[{"k":"料號｜系列｜工程站｜機台｜專案｜單位｜客戶｜年度","v":"值"}],
+ "fullText":"圖中所有文字（保留原文，簡體不要改）",
+ "ab":{ "foundSrc":"IPQC｜FQC1｜FQC2｜工程","foundStation":"發現站","occurStation":"發生站（看不出來留空）",
+  "machine":"","partNo":"","lotNo":"","sampleQty":"數字","defectQty":"數字","defectItem":"不良項目（繁體標準名稱）","defectMode":"原文寫法",
+  "chain":["發生→流出 每一步"],"occurCause":{"l1":"人｜機｜料｜法｜環｜測","l2":"","text":""},"outCause":{"l1":"","l2":"","text":""},
+  "verifyText":"再現性驗證","containResult":"圍堵結果",
+  "cms":[{"target":"圍堵｜發生｜流出","means":"人員確認｜檢驗加嚴｜標準化｜防呆｜設備治具改善","content":"對策內容"}] }
+}]}
+規則：非異常類型不要 ab；報告上沒有的欄位留空字串，不要猜；責任人、日期、狀態不要填（由我自己補）。`;
+async function importText(txt){let j;try{j=JSON.parse(txt.replace(/^\uFEFF/,'').replace(/^```(json)?|```$/gm,'').trim());}catch(e){alert('不是有效的 JSON：'+e.message);return;}
+  if(j.kind==='backup'){if(confirm('這是完整備份檔。要用它還原全部資料嗎？\n（目前資料會被取代）'))await restore(txt);return;}
+  const list=Array.isArray(j)?j:(j.cards||[j]);let add=0,fill=0;
+  for(const raw of list){if(!raw||!raw.title){continue;}const imgs=[];for(const d of (raw.images||[]))if(typeof d==='string'&&d.startsWith('data:image')){const id=uid();await putImg(id,d);imgs.push(id);}
+    const ex=raw.id&&cardById(raw.id);
+    if(ex){fillEmpty(ex,raw);if(imgs.length&&!ex.images.length)ex.images=imgs;await saveCard(ex);fill++;}
+    else{const c=normCard(Object.assign({},raw,{images:imgs,relations:[],vgroup:null,ver:1,pinned:false,watch:false}));if(!raw.id)c.id=uid();c.vgroup=c.id;c.source=raw.source||'AI 匯入';
+      c.ab.cms.forEach(x=>{x.id=x.id||uid();if(!STATUSES.includes(x.status))x.status='待改善';});
+      if(isAb(c)){for(const s of[c.ab.foundStation,c.ab.occurStation])if(s)addDictItem('station',s);if(c.ab.defectItem&&!matchDefect(c))addDictItem('defect',c.ab.defectItem);}
+      await saveCard(c);add++;}}
+  toast(`匯入完成：新增 ${add} 筆，補空白 ${fill} 筆`);route();}
+function matchDefect(c){const n=norm(c.ab.defectItem);const d=DICT.defects.find(d=>[d.name,...d.syn].map(norm).includes(n));if(d){c.ab.defectItem=d.name;return true;}return false;}
+function fillEmpty(t,s){for(const k of['title','date','author','fullText','type'])if(!t[k]&&s[k])t[k]=s[k];
+  if(s.tags&&s.tags.length){const have=new Set(t.tags.map(x=>x.k+'|'+x.v));s.tags.forEach(x=>{if(x.k&&x.v&&!have.has(x.k+'|'+x.v))t.tags.push({k:x.k,v:x.v});});}
+  if(s.ab){const a=t.ab,b=s.ab;for(const k of['foundSrc','foundStation','occurStation','machine','partNo','lotNo','sampleQty','defectQty','defectItem','defectMode','verifyText','containResult'])if((a[k]===''||a[k]==null)&&b[k]!=null&&b[k]!=='')a[k]=String(b[k]);
+    if(!a.chain.length&&b.chain)a.chain=b.chain.filter(Boolean);for(const k of['occurCause','outCause'])if(b[k])for(const kk of['l1','l2','text'])if(!a[k][kk]&&b[k][kk])a[k][kk]=b[k][kk];
+    if(!a.cms.length&&b.cms)a.cms=b.cms.map(x=>Object.assign(newCm(),{target:x.target||'',means:x.means||'',content:x.content||''}));}}
+function pasteBox(){const md=document.createElement('div');md.className='modal';md.innerHTML=`<div class="box"><h3 style="margin-top:0">貼上 JSON</h3><textarea id="pj" style="min-height:220px"></textarea><div class="btns"><button class="btn pri" id="pjOk">匯入</button><button class="btn" id="pjNo">取消</button></div></div>`;
+  document.body.appendChild(md);$('#pjNo').onclick=()=>md.remove();$('#pjOk').onclick=async()=>{const t=$('#pj').value;md.remove();await importText(t);};}
+async function backup(){toast('打包中…');const imgs=await DB.all('images');const o={app:'work-app',kind:'backup',appVersion:APP_VERSION,exportedAt:new Date().toISOString(),dict:DICT,pref:{hidden:PREF.hidden},cards:CARDS,images:imgs};
+  const b=new Blob([JSON.stringify(o)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`工作APP備份_${today()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
+async function restore(txt){let j;try{j=JSON.parse(txt);}catch(e){alert('備份檔無法讀取：'+e.message);return;}
+  if(j.kind!=='backup'||!Array.isArray(j.cards)){alert('這不是工作 APP 的完整備份檔。');return;}
+  if(!confirm(`還原會取代目前全部資料。\n備份日期：${(j.exportedAt||'').slice(0,10)}，共 ${j.cards.length} 筆。\n確定還原？`))return;
+  await DB.clear('cards');await DB.clear('images');IMG.clear();for(const i of j.images||[])await DB.put('images',i);
+  CARDS=[];for(const c of j.cards){const n=normCard(c);await DB.put('cards',n);CARDS.push(n);}
+  if(j.dict){DICT=Object.assign(defaultDict(),j.dict);await saveDict();}if(j.pref&&j.pref.hidden){PREF.hidden=j.pref.hidden;await savePref();}
+  toast('還原完成：'+CARDS.length+' 筆');location.hash='#/home';route();}
+
+/* ---------- 啟動 ---------- */
+function applyPresent(){document.body.classList.toggle('present',PREF.present);$('#pmBtn').textContent=PREF.present?'展示中・關閉':'展示模式';}
+async function init(){await openDB();CARDS=(await DB.all('cards')).map(normCard);
+  const d=await DB.get('kv','dict');if(d)DICT=Object.assign(defaultDict(),d.v);const p=await DB.get('kv','pref');if(p)PREF=Object.assign(PREF,p.v);
+  applyPresent();
+  $('#pmBtn').onclick=()=>{PREF.present=!PREF.present;savePref();applyPresent();if(PREF.present&&location.hash.startsWith('#/edit')){F=null;history.back();}else route();toast(PREF.present?'展示模式：已隱藏指定欄位':'已關閉展示模式');};
+  $('#backBtn').onclick=()=>history.length>1?history.back():(location.hash='#/home');
+  window.addEventListener('hashchange',route);route();
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+init().catch(e=>{document.getElementById('main').innerHTML='<div class="alert red">啟動失敗：'+esc(e.message)+'</div>';});
+
+</script>
+</body>
+</html>
